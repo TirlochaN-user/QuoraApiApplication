@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
-@Table(name="answer",schema="quora")
+@Table(name="answer",schema="public")
 public class AnswerEntity implements Serializable {
     @Id
     @Column(name="id")

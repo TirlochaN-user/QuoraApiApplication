@@ -20,7 +20,7 @@ public class SignupBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity signup(UserEntity user) throws SignUpRestrictedException{
         UserEntity createdUser;
-        createdUser=userDao.getUserByUsername(user);
+        createdUser=userDao.getUserByUsername(user.getUsername());
         if(createdUser==null)
         {
             createdUser=userDao.getUserByEmail(user);
