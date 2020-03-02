@@ -1,9 +1,6 @@
 package com.upgrad.quora.service.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -11,26 +8,28 @@ import java.io.Serializable;
 @Entity
 @Table(name="answer",schema="quora")
 public class AnswerEntity implements Serializable {
-    @Column(name="ID")
+    @Id
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "UUID")
+    @Column(name = "uuid")
     @Size(max=200)
     @NotNull
     private String uuid;
 
-    @Column(name="ANS")
+    @Column(name="ans")
     @Size(max=255)
     @NotNull
     private String ans;
 
     @ManyToOne
-    @Column(name="USER_ID")
+    @JoinColumn(name="user_id")
     @NotNull
     private UserEntity user;
 
     @ManyToOne
-    @Column(name="QUESTION_ID")
+    @JoinColumn(name="question_id")
     @NotNull
     private  QuestionEntity question;
 

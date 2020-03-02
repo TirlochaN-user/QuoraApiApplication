@@ -6,24 +6,31 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
-@Table(name="USER",schema="quora")
+@Table(name="users",schema="public")
+@NamedQueries(
+        {
+                @NamedQuery(name = "userByUuid", query = "select u from UserEntity u where u.uuid = :uuid"),
+                @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email =:email"),
+                @NamedQuery(name = "userByUsername", query = "select u from UserEntity u where u.username =:username")
+        }
+)
 public class UserEntity implements Serializable {
     @Id
-    @Column(name="ID")
+    @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="UUID")
+    @Column(name="uuid")
     @Size(max=200)
     @NotNull
     private String uuid;
 
-    @Column(name="FIRST_NAME")
+    @Column(name="firstname")
     @Size(max=30)
     @NotNull
     private String fname;
 
-    @Column(name="LAST_NAME")
+    @Column(name="lastname")
     @Size(max=30)
     @NotNull
     private String lname;
@@ -33,33 +40,42 @@ public class UserEntity implements Serializable {
     @NotNull
     private String username;
 
-    @Column(name="EMAIL")
+    @Column(name="email")
     @Size(max=50)
     @NotNull
     private String email;
 
-    @Column(name="PASSWORD")
+    @Column(name="password")
     @Size(max=255)
     @NotNull
     private String password;
 
 
-    @Column(name="SALT")
+    @Column(name="salt")
     @Size(max=200)
     @NotNull
     private String salt;
 
-    @Column(name="COUNTRY")
+    @Column(name="country")
     @Size(max=30)
     private String country;
 
-    @Column(name="ABOUT_ME")
+    @Column(name="aboutme")
     @Size(max=50)
-    private String aboutMe;
+    private String aboutme;
 
     @Column(name="DOB")
     @Size(max=30)
     private String dob;
+
+    @Column(name="role")
+    @Size(max=30)
+    private String role;
+
+    @Column(name="contactnumber")
+    @Size(max=30)
+    @NotNull
+    private String contactNumber;
 
     public int getId() {
         return id;
@@ -133,12 +149,12 @@ public class UserEntity implements Serializable {
         this.country = country;
     }
 
-    public String getAboutMe() {
-        return aboutMe;
+    public String getAboutme() {
+        return aboutme;
     }
 
-    public void setAboutMe(String aboutMe) {
-        this.aboutMe = aboutMe;
+    public void setAboutme(String aboutMe) {
+        this.aboutme = aboutMe;
     }
 
     public String getDob() {
@@ -165,14 +181,7 @@ public class UserEntity implements Serializable {
         this.contactNumber = contactNumber;
     }
 
-    @Column(name="ROLE")
-    @Size(max=30)
-    private String role;
 
-    @Column(name="CONTACT_NUMBER")
-    @Size(max=30)
-    @NotNull
-    private String contactNumber;
 
     @Override
     public int hashCode() {

@@ -10,25 +10,26 @@ import java.time.ZonedDateTime;
 @Table(name = "question",schema = "quora")
 public class QuestionEntity implements Serializable {
     @Id
+    @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="UUID")
+    @Column(name="uuid")
     @Size(max=200)
     @NotNull
     private String uuid;
 
-    @Column(name = "CONTENT")
+    @Column(name = "content")
     @Size(max=500)
     @NotNull
     private  String content;
 
-    @Column(name="DATE")
+    @Column(name="date")
     @NotNull
     private ZonedDateTime date;
 
     @ManyToOne
-    @JoinColumn(name="USER_ID")
+    @JoinColumn(name="user_id")
     @NotNull
     private UserEntity user;
 

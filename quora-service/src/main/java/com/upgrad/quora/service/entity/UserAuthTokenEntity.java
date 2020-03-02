@@ -6,36 +6,38 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+@Entity
+@Table(name="user_auth",schema = "quora")
 public class UserAuthTokenEntity implements Serializable {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "user_id")
     @NotNull
     private UserEntity user;
 
-    @Column(name="UUID")
+    @Column(name="uuid")
     @Size(max=500)
     @NotNull
     private String uuid;
 
-    @Column(name = "ACCESS_TOKEN")
+    @Column(name = "access_token")
     @NotNull
     @Size(max = 500)
     private String accessToken;
 
-    @Column(name = "LOGIN_AT")
+    @Column(name = "login_at")
     @NotNull
     private ZonedDateTime loginAt;
 
-    @Column(name = "EXPIRES_AT")
+    @Column(name = "expires_at")
     @NotNull
     private ZonedDateTime expiresAt;
 
-    @Column(name = "LOGOUT_AT")
+    @Column(name = "logout_at")
     private ZonedDateTime logoutAt;
 
     @Override
