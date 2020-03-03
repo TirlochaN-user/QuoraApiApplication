@@ -22,6 +22,14 @@ public class UserDao {
         }
     }
 
+    public UserEntity getUserById(UserEntity user) {
+        try {
+            return em.createNamedQuery("userById", UserEntity.class).setParameter("id",user.getUuid()).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
     public UserEntity getUserByEmail(UserEntity user) {
         try {
             return em.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", user.getEmail()).getSingleResult();
