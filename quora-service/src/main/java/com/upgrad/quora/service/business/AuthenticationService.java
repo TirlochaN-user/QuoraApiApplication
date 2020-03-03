@@ -58,7 +58,7 @@ public class AuthenticationService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity getAccessToken(String accessToken,int op) throws SignOutRestrictedException,AuthorizationFailedException {
         //op=1 for /user/signout
-        //op=2 for /userprofile/{id}
+        //op=2 for /userprofile/{id},/admin/user/{userId}
         UserAuthTokenEntity userAuthToken = userAuthDao.getAccessToken(accessToken);
         if (userAuthToken == null) {
             if (op == 1) {
@@ -70,11 +70,19 @@ public class AuthenticationService {
         }
         else if(userAuthToken.getLogoutAt()!=null)
         {
-            throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
+            if(op==1)
+                throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
+            else if(op==2)
+                throw new AuthorizationFailedException("ATHR-002","User is signed out.");
         }
         else {
             if(op==1)
                 userAuthDao.updateLogoutAt(userAuthToken);
+            if(op==2)
+            {
+                if(userAuthToken.getUser().getRole().equals("nonadmin"))
+                    throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not an admin");
+            }
         }
         return userAuthToken;
     }

@@ -24,7 +24,7 @@ public class UserDao {
 
     public UserEntity getUserById(String uuid) {
         try {
-            return em.createNamedQuery("userById", UserEntity.class).setParameter("id",uuid).getSingleResult();
+            return em.createNamedQuery("userById", UserEntity.class).setParameter("uuid",uuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
@@ -52,5 +52,12 @@ public class UserDao {
     public void updateUser(final UserEntity updatedUserEntity) {
         em.merge(updatedUserEntity);
     }
+
+    public void deleteUser(Integer id)
+    {
+        UserEntity user=em.find(UserEntity.class,id);
+        em.remove(user);
+    }
+
 
 }

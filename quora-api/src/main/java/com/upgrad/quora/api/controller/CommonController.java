@@ -25,9 +25,9 @@ public class CommonController {
 
     @RequestMapping(method = RequestMethod.POST,path="/userprofile/{userid}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UserDetailsResponse> getUserDetails(@PathVariable("userid") final String userUuid,
-                                                              @RequestHeader("authorization") final String access_token) throws AuthorizationFailedException, SignOutRestrictedException, UserNotFoundException {
+                                                              @RequestHeader("access-token") final String access_token) throws AuthorizationFailedException, SignOutRestrictedException, UserNotFoundException {
         UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(access_token,2);
-        UserEntity user=userCommonBusinessService.getUserByUuid(userUuid);
+        UserEntity user=userCommonBusinessService.getUserByUuid(userUuid,1);
         UserDetailsResponse userDetails=new UserDetailsResponse();
         userDetails.setUserName(user.getUsername());
         userDetails.setFirstName(user.getFname());
