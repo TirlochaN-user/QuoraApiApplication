@@ -5,6 +5,7 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,18 +56,27 @@ public class AuthenticationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity getAccessToken(String accessToken) throws SignOutRestrictedException {
-        UserAuthTokenEntity userAuthToken= userAuthDao.getAccessToken(accessToken);
-        if(userAuthToken==null)
-        {
-            throw new SignOutRestrictedException("SGR-001","User is not Signed in");
+    public UserAuthTokenEntity getAccessToken(String accessToken,int op) throws SignOutRestrictedException,AuthorizationFailedException {
+        //op=1 for /user/signout
+        //op=2 for /userprofile/{id}
+        UserAuthTokenEntity userAuthToken = userAuthDao.getAccessToken(accessToken);
+        if (userAuthToken == null) {
+            if (op == 1) {
+                throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
+            }
+            else if (op == 2) {
+                throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+            }
         }
-        else
+        else if(userAuthToken.getLogoutAt()!=null)
         {
-
-            userAuthDao.updateLogoutAt(userAuthToken);
-            return userAuthToken;
+            throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
         }
+        else {
+            if(op==1)
+                userAuthDao.updateLogoutAt(userAuthToken);
+        }
+        return userAuthToken;
     }
 
 }

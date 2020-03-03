@@ -22,9 +22,9 @@ public class UserDao {
         }
     }
 
-    public UserEntity getUserById(UserEntity user) {
+    public UserEntity getUserById(String uuid) {
         try {
-            return em.createNamedQuery("userById", UserEntity.class).setParameter("id",user.getUuid()).getSingleResult();
+            return em.createNamedQuery("userById", UserEntity.class).setParameter("id",uuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
