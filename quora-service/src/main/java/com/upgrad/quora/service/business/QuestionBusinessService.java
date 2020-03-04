@@ -2,6 +2,7 @@ package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +25,12 @@ public class QuestionBusinessService {
     {
         List<QuestionEntity> allQuestion = questionDao.getAllQuestions();
         return allQuestion;
+    }
+
+    @Transactional
+    public QuestionEntity editQuestionContent(String questionUuid,String content) throws InvalidQuestionException {
+        QuestionEntity questionEntity=questionDao.getQuestionByQuestionId(questionUuid);
+        questionEntity.setContent(content);
+        return questionDao.updateQuestion(questionEntity);
     }
 }

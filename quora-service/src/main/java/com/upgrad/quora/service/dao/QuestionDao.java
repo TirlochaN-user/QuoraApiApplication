@@ -1,8 +1,11 @@
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -20,5 +23,20 @@ public class QuestionDao {
     public List<QuestionEntity> getAllQuestions()
     {
         return em.createNamedQuery("getAllQuestions",QuestionEntity.class).getResultList();
+    }
+
+    public QuestionEntity getQuestionByQuestionId(String questionUuid) throws InvalidQuestionException {
+        try{
+            return em.createNamedQuery("questionByUuid",QuestionEntity.class).setParameter("uuid",questionUuid).getSingleResult();
+        }
+        catch(NoResultException nre)
+        {
+            throw new InvalidQuestionException("QUES-001","Entered question uuid does not exist");
+        }
+    }
+
+    public QuestionEntity updateQuestion(QuestionEntity questionEntity) {
+        em.merge(questionEntity);
+        return questionEntity;
     }
 }

@@ -1,11 +1,14 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserAuthDao;
 import com.upgrad.quora.service.dao.UserDao;
+import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,9 @@ public class AuthenticationService {
 
     @Autowired
     private UserAuthDao userAuthDao;
+
+    @Autowired
+    private QuestionDao questionDao;
 
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -64,7 +70,7 @@ public class AuthenticationService {
             if (op == 1) {
                 throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
             }
-            else if (op == 2||op==3||op==4) {
+            else if (op == 2||op==3||op==4||op==5) {
                 throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
             }
         }
@@ -78,6 +84,8 @@ public class AuthenticationService {
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to post a question");
             else if(op==4)
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get all questions");
+            else if(op==5)
+                throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to edit the question");
         }
         else {
             if(op==1)
@@ -89,6 +97,14 @@ public class AuthenticationService {
             }
         }
         return userAuthToken;
+    }
+
+    public void checkOwner(UserAuthTokenEntity userAuthTokenEntity,String questionId) throws AuthorizationFailedException, InvalidQuestionException {
+        QuestionEntity question =questionDao.getQuestionByQuestionId(questionId);
+        if(userAuthTokenEntity.getUser().getId()!=question.getUser().getId())
+        {
+            throw  new AuthorizationFailedException("ATHR-003","Only the question owner can change the question.");
+        }
     }
 
 }
