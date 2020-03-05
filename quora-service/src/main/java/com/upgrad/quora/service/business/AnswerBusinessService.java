@@ -20,14 +20,23 @@ public class AnswerBusinessService {
         answerDao.createAnser(answer);
     }
 
-    public void checkOwner(String answerId, UserAuthTokenEntity userAuthTokenEntity) throws AuthorizationFailedException, AnswerNotFoundException {
+    public void checkOwner(String answerId, UserAuthTokenEntity userAuthTokenEntity,int op) throws AuthorizationFailedException, AnswerNotFoundException {
         AnswerEntity answer = answerDao.getAnswerByUuid(answerId);
         if(answer==null)
             throw new AnswerNotFoundException("ANS-001","Entered answer uuid does not exist");
-        else if(answer.getUser()!=userAuthTokenEntity.getUser())
+        else if(answer.getUser()!=userAuthTokenEntity.getUser() && userAuthTokenEntity.getUser().getRole().equals("nonadmin"))
         {
-            throw new AuthorizationFailedException("ATHR-003","Only the answer owner can edit the answer");
+            if(op==1)
+                throw new AuthorizationFailedException("ATHR-003","Only the answer owner can edit the answer");
+            else if(op==2)
+                throw new AuthorizationFailedException("ATHR-003","Only the answer owner or admin can delete the answer");
         }
+    }
+
+    public AnswerEntity getAnswerByUuid(String answerUuid)
+    {
+        AnswerEntity answer = answerDao.getAnswerByUuid(answerUuid);
+        return answer;
     }
 
     @Transactional
@@ -37,5 +46,11 @@ public class AnswerBusinessService {
         answer.setAns(answerContent);
         answerDao.editAnswerContent(answer);
         return answer;
+    }
+
+    @Transactional
+    public void deleteAnswer(AnswerEntity answer)
+    {
+        answerDao.deleteAnswer(answer);
     }
 }

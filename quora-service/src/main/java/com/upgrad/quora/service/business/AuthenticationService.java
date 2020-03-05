@@ -94,6 +94,8 @@ public class AuthenticationService {
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to post an answer");
             else if(op==9)
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to edit an answer");
+            else if(op==10)
+                throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to delete an answer");
         }
         else {
             if(op==1)

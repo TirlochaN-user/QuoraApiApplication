@@ -1,9 +1,6 @@
 package com.upgrad.quora.api.controller;
 
-import com.upgrad.quora.api.model.AnswerEditRequest;
-import com.upgrad.quora.api.model.AnswerEditResponse;
-import com.upgrad.quora.api.model.AnswerRequest;
-import com.upgrad.quora.api.model.AnswerResponse;
+import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AnswerBusinessService;
 import com.upgrad.quora.service.business.AuthenticationService;
 import com.upgrad.quora.service.business.QuestionBusinessService;
@@ -56,11 +53,23 @@ public class AnswerController {
     @RequestMapping(method = RequestMethod.PUT,path = "/answer/edit/{answerId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerEditResponse> editQuestion(@RequestHeader("access-token") String accessToken, @PathVariable("answerId") String answerId, AnswerEditRequest answerEditRequest) throws AuthorizationFailedException, SignOutRestrictedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(accessToken,9);
-        answerBusinessService.checkOwner(answerId,userAuthTokenEntity);
+        answerBusinessService.checkOwner(answerId,userAuthTokenEntity,1);
         AnswerEntity answerEntity=answerBusinessService.editAnswerContent(answerId,answerEditRequest.getContent());
         AnswerEditResponse answerEditResponse=new AnswerEditResponse();
         answerEditResponse.id(answerEntity.getUuid()).status("ANSWER EDITED");
 
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse,HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE,path = "/answer/delete/{answerId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<AnswerDeleteResponse> deleteAnswer(@RequestHeader("access-token") String accessToken, String answerId) throws AuthorizationFailedException, SignOutRestrictedException, AnswerNotFoundException {
+        UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(accessToken,10);
+        answerBusinessService.checkOwner(answerId,userAuthTokenEntity,2);
+        AnswerEntity answer=answerBusinessService.getAnswerByUuid(answerId);
+        answerBusinessService.deleteAnswer(answer);
+        AnswerDeleteResponse answerDeleteResponse=new AnswerDeleteResponse();
+        answerDeleteResponse.id(answerId).status("ANSWER DELETED");
+
+        return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse,HttpStatus.OK);
     }
 }

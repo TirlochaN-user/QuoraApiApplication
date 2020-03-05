@@ -33,4 +33,11 @@ public class AnswerDao {
     {
         em.merge(answer);
     }
+
+    public void deleteAnswer(AnswerEntity answer)
+    {
+        AnswerEntity answerEntity = em.find(AnswerEntity.class, answer.getId());
+        em.remove(answerEntity);
+
+    }
 }
