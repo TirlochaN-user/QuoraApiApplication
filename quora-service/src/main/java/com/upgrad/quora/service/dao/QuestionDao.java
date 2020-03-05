@@ -39,4 +39,10 @@ public class QuestionDao {
         em.merge(questionEntity);
         return questionEntity;
     }
+
+    public void deleteQuestion(QuestionEntity question)
+    {
+        QuestionEntity questionEntity = em.find(QuestionEntity.class,question.getId());
+        em.remove(questionEntity);
+    }
 }

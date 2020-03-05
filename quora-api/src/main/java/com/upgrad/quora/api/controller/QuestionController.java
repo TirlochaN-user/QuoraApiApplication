@@ -58,12 +58,25 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.PUT,path = "/question/edit/{questionId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestion(@RequestHeader("access-token") String accessToken, @PathVariable("questionId") String questionId, QuestionEditRequest questionEditRequest) throws AuthorizationFailedException, SignOutRestrictedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(accessToken,5);
-        authenticationService.checkOwner(userAuthTokenEntity,questionId);
+        authenticationService.checkOwner(userAuthTokenEntity,questionId,1);
         QuestionEntity question=questionBusinessService.editQuestionContent(questionId,questionEditRequest.getContent());
         QuestionEditResponse questionEditResponse=new QuestionEditResponse();
         questionEditResponse.id(question.getUuid()).status("QUESTION EDITED");
 
         return new ResponseEntity<QuestionEditResponse>(questionEditResponse,HttpStatus.OK);
+    }
+
+    @RequestMapping(method=RequestMethod.DELETE,path="/question/delete/{questionId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<QuestionDeleteResponse> deleteQuestion(@RequestHeader("access-token") String accessToken,@PathVariable("questionId") String questionId) throws AuthorizationFailedException, SignOutRestrictedException, InvalidQuestionException {
+        UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(accessToken,6);
+        authenticationService.checkOwner(userAuthTokenEntity,questionId,2);
+        QuestionEntity question=questionBusinessService.getQuestionByQuestionId(questionId);
+        questionBusinessService.deleteQuestion(question.getUuid());
+        QuestionDeleteResponse questionDeleteResponse=new QuestionDeleteResponse();
+        questionDeleteResponse.id(question.getUuid()).status("QUESTION DELETED");
+
+        return new ResponseEntity<QuestionDeleteResponse>(questionDeleteResponse,HttpStatus.OK);
+
     }
 
 }

@@ -26,6 +26,10 @@ public class QuestionBusinessService {
         List<QuestionEntity> allQuestion = questionDao.getAllQuestions();
         return allQuestion;
     }
+    public QuestionEntity getQuestionByQuestionId(String questionUuid) throws InvalidQuestionException {
+        return questionDao.getQuestionByQuestionId(questionUuid);
+    }
+
 
     @Transactional
     public QuestionEntity editQuestionContent(String questionUuid,String content) throws InvalidQuestionException {
@@ -33,4 +37,12 @@ public class QuestionBusinessService {
         questionEntity.setContent(content);
         return questionDao.updateQuestion(questionEntity);
     }
+
+    @Transactional
+    public void deleteQuestion(String questionUuid) throws InvalidQuestionException {
+        QuestionEntity questionEntity=questionDao.getQuestionByQuestionId(questionUuid);
+        questionDao.deleteQuestion(questionEntity);
+
+    }
+
 }

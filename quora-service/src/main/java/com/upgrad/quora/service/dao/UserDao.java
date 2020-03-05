@@ -59,5 +59,4 @@ public class UserDao {
         em.remove(user);
     }
 
-
 }

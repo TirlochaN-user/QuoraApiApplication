@@ -70,7 +70,7 @@ public class AuthenticationService {
             if (op == 1) {
                 throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
             }
-            else if (op == 2||op==3||op==4||op==5) {
+            else if (op == 2||op==3||op==4||op==5||op==6) {
                 throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
             }
         }
@@ -86,6 +86,8 @@ public class AuthenticationService {
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get all questions");
             else if(op==5)
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to edit the question");
+            else if(op==6)
+                throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to delete a question");
         }
         else {
             if(op==1)
@@ -99,11 +101,14 @@ public class AuthenticationService {
         return userAuthToken;
     }
 
-    public void checkOwner(UserAuthTokenEntity userAuthTokenEntity,String questionId) throws AuthorizationFailedException, InvalidQuestionException {
+    public void checkOwner(UserAuthTokenEntity userAuthTokenEntity,String questionId,int op) throws AuthorizationFailedException, InvalidQuestionException {
         QuestionEntity question =questionDao.getQuestionByQuestionId(questionId);
         if(userAuthTokenEntity.getUser().getId()!=question.getUser().getId())
         {
-            throw  new AuthorizationFailedException("ATHR-003","Only the question owner can change the question.");
+            if(op==1)
+                throw  new AuthorizationFailedException("ATHR-003","Only the question owner can change the question.");
+            else if(op==2)
+                throw  new AuthorizationFailedException("ATHR-003","Only the question owner or admin can delete the question.");
         }
     }
 
