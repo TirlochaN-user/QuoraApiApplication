@@ -1,5 +1,7 @@
 package com.upgrad.quora.api.controller;
 
+import com.upgrad.quora.api.model.AnswerEditRequest;
+import com.upgrad.quora.api.model.AnswerEditResponse;
 import com.upgrad.quora.api.model.AnswerRequest;
 import com.upgrad.quora.api.model.AnswerResponse;
 import com.upgrad.quora.service.business.AnswerBusinessService;
@@ -8,6 +10,7 @@ import com.upgrad.quora.service.business.QuestionBusinessService;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
@@ -48,5 +51,16 @@ public class AnswerController {
         answerResponse.setStatus("ANSWER CREATED");
 
         return new ResponseEntity<AnswerResponse>(answerResponse, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT,path = "/answer/edit/{answerId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<AnswerEditResponse> editQuestion(@RequestHeader("access-token") String accessToken, @PathVariable("answerId") String answerId, AnswerEditRequest answerEditRequest) throws AuthorizationFailedException, SignOutRestrictedException, AnswerNotFoundException {
+        UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(accessToken,9);
+        answerBusinessService.checkOwner(answerId,userAuthTokenEntity);
+        AnswerEntity answerEntity=answerBusinessService.editAnswerContent(answerId,answerEditRequest.getContent());
+        AnswerEditResponse answerEditResponse=new AnswerEditResponse();
+        answerEditResponse.id(answerEntity.getUuid()).status("ANSWER EDITED");
+
+        return new ResponseEntity<AnswerEditResponse>(answerEditResponse,HttpStatus.OK);
     }
 }
