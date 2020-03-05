@@ -34,9 +34,8 @@ public class QuestionDao {
         try{
             return em.createNamedQuery("questionByUuid",QuestionEntity.class).setParameter("uuid",questionUuid).getSingleResult();
         }
-        catch(NoResultException nre)
-        {
-            throw new InvalidQuestionException("QUES-001","Entered question uuid does not exist");
+        catch(NoResultException nre) {
+                throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
         }
     }
 

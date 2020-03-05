@@ -70,7 +70,7 @@ public class AuthenticationService {
             if (op == 1) {
                 throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
             }
-            else if (op == 2||op==3||op==4||op==5||op==6||op==7) {
+            else{
                 throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
             }
         }
@@ -90,6 +90,8 @@ public class AuthenticationService {
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to delete a question");
             else if(op==7)
                 throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get all questions posted by a specific user");
+            else if(op==8)
+                throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to post an answer");
         }
         else {
             if(op==1)
