@@ -3,11 +3,14 @@ package com.upgrad.quora.api.controller;
 import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AuthenticationService;
 import com.upgrad.quora.service.business.QuestionBusinessService;
+import com.upgrad.quora.service.business.UserCommonBusinessService;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +29,9 @@ public class QuestionController {
 
     @Autowired
     private QuestionBusinessService questionBusinessService;
+
+    @Autowired
+    private UserCommonBusinessService userCommonBusinessService;
 
     @RequestMapping(method = RequestMethod.POST,path="/question/create",produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("access-token") String access_token, QuestionRequest questionRequest) throws AuthorizationFailedException, SignOutRestrictedException {
@@ -77,6 +83,20 @@ public class QuestionController {
 
         return new ResponseEntity<QuestionDeleteResponse>(questionDeleteResponse,HttpStatus.OK);
 
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "question/all/{userId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser(@RequestHeader("access-token") String accessToken,@PathVariable("userId") String userId) throws AuthorizationFailedException, SignOutRestrictedException, UserNotFoundException {
+        UserAuthTokenEntity userAuthTokenEntity=authenticationService.getAccessToken(accessToken,7);
+        UserEntity user=userCommonBusinessService.getUserByUuid(userId,3);
+        List<QuestionEntity> allQuestions=questionBusinessService.getAllQuestionsByUser(user);
+        List<QuestionDetailsResponse> questionDetailsResponses=new ArrayList<QuestionDetailsResponse>();
+        for(int i=0;i<allQuestions.size();i++)
+        {
+            questionDetailsResponses.add(new QuestionDetailsResponse().content(allQuestions.get(i).getContent())
+                    .id(allQuestions.get(i).getUuid()));
+        }
+        return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponses,HttpStatus.OK);
     }
 
 }

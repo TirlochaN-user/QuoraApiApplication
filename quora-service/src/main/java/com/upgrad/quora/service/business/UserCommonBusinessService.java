@@ -20,13 +20,12 @@ public class UserCommonBusinessService {
         {
             if(op==1)
                 throw new UserNotFoundException("USR-001","User with entered uuid does not exist");
-            else
+            else if(op==2)
                 throw new UserNotFoundException("USR-001","User with entered uuid to be deleted does not exist");
+            else if(op==3)
+                throw new UserNotFoundException("USR-001","User with entered uuid whose question details are to be seen does not exist");
         }
-        else
-        {
-            return user;
-        }
+        return user;
     }
 
     @Transactional

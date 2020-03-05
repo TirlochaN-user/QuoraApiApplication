@@ -25,6 +25,11 @@ public class QuestionDao {
         return em.createNamedQuery("getAllQuestions",QuestionEntity.class).getResultList();
     }
 
+    public List<QuestionEntity> getAllQuestionsByUser(Integer userid)
+    {
+        return em.createNamedQuery("questionByUserid",QuestionEntity.class).setParameter("userid",userid).getResultList();
+    }
+
     public QuestionEntity getQuestionByQuestionId(String questionUuid) throws InvalidQuestionException {
         try{
             return em.createNamedQuery("questionByUuid",QuestionEntity.class).setParameter("uuid",questionUuid).getSingleResult();

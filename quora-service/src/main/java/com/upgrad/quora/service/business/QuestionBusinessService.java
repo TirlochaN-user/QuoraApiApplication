@@ -2,6 +2,7 @@ package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,13 @@ public class QuestionBusinessService {
         List<QuestionEntity> allQuestion = questionDao.getAllQuestions();
         return allQuestion;
     }
+
+    public List<QuestionEntity> getAllQuestionsByUser(UserEntity userEntity)
+    {
+        List<QuestionEntity> allQuestion = questionDao.getAllQuestionsByUser(userEntity.getId());
+        return allQuestion;
+    }
+
     public QuestionEntity getQuestionByQuestionId(String questionUuid) throws InvalidQuestionException {
         return questionDao.getQuestionByQuestionId(questionUuid);
     }
